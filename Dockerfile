@@ -15,7 +15,7 @@ RUN a2enmod rewrite
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Make Apache listen on all interfaces (not just 127.0.0.1)
-RUN sed -i 's/Listen 80/Listen 0.0.0.0:8080/' /etc/apache2/ports.conf
+RUN sed -i 's/Listen 8080/Listen 0.0.0.0:8080/' /etc/apache2/ports.conf
 
 # Allow .htaccess overrides for CodeIgniter
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
@@ -27,7 +27,7 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 80 for Render to detect
-EXPOSE 80
+EXPOSE 8080
 
 # Start Apache in foreground
 CMD ["apache2ctl", "-D", "FOREGROUND"]
