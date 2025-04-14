@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Set ServerName to suppress startup warnings
-RUN echo "ServerName 127.0.0.1" >> /etc/apache2/apache2.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Make Apache listen on all interfaces (not just 127.0.0.1)
-RUN sed -i 's/Listen 80/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
+RUN sed -i 's/Listen 80/Listen 127.0.0.1:80/' /etc/apache2/ports.conf
 
 # Allow .htaccess overrides for CodeIgniter
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
