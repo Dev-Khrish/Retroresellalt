@@ -1,20 +1,33 @@
-# Use an appropriate base image (e.g., Node.js for a JavaScript project)
-FROM node:18-alpine
+# Use official PHP Apache image
+FROM php:8.1-apache
 
-# Set the working directory in the container
-WORKDIR /app
+# Install required PHP extensions
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd mysqli pdo pdo_mysql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Install dependencies
-RUN npm install
+# Set ServerName to suppress startup warnings
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Copy the rest of the application code
-COPY . .
+# Make Apache listen on all interfaces (not just 127.0.0.1)
+RUN sed -i 's/Listen 80/Listen 0.0.0.0:8080/' /etc/apache2/ports.conf
 
-# Expose the port your app runs on (e.g., 3000)
-EXPOSE 3000
+# Allow .htaccess overrides for CodeIgniter
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-# Define the command to run your application
-CMD ["npm", "start"]
+# Copy CodeIgniter project files
+COPY . /var/www/html/
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Expose port 80 for Render to detect
+EXPOSE 80
+
+# Start Apache in foreground
+CMD ["apache2ctl", "-D", "FOREGROUND"]
