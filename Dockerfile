@@ -1,5 +1,6 @@
 # Use an official PHP image with Apache as the base image
 FROM php:8.1-apache
+ENV APACHE_RUN_PORT=$PORT
 
 # Install necessary dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -27,10 +28,10 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Update Apache to listen on all interfaces (not just 127.0.0.1)
-RUN sed -i 's/Listen 80/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
+RUN sed -i 's/Listen 8080/Listen ${PORT}/' /etc/apache2/ports.conf
 
-# Expose port 80 for Render to detect
-EXPOSE 80
+# Expose port 8080 for Render to detect
+EXPOSE 8080
 
 # Set the command to run the Apache server in the foreground
 CMD ["apache2-foreground"]
