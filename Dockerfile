@@ -20,10 +20,16 @@ COPY . /var/www/html/
 # Set proper permissions for the files
 RUN chown -R www-data:www-data /var/www/html
 
+# Set the ServerName to suppress warnings
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Allow .htaccess overrides for Apache
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-# Expose port 80 (default HTTP port)
+# Update Apache to listen on all interfaces (not just 127.0.0.1)
+RUN sed -i 's/Listen 80/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
+
+# Expose port 80 for Render to detect
 EXPOSE 80
 
 # Set the command to run the Apache server in the foreground
