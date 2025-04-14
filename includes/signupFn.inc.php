@@ -53,10 +53,10 @@ function pwdMatch($pwd,$rpwd) {
 function createUser($name,$email,$address,$pwd,$number){
     //making config as we need this everytime we can just use it through include_once
 //1st step for database php connection
-$serverName = "sql12.freesqldatabase.com";
-$dBUsername = "sql12773103";
-$dBPassword = "qyCb6QcIWe";
-$dBName = "sql12773103";
+$serverName = "ballast.proxy.rlwy.net";
+$dBUsername = "root";
+$dBPassword = "sRnnMyRsjxVnoQADGrNFsfQQeLvxTpSD";
+$dBName = "railway";
 
 //Before we can access data in the MySQL database, we need to be able to connect to the server i.e php
 $conn = new mysqli($serverName,$dBUsername,$dBPassword,$dBName );
